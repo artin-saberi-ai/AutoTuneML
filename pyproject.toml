@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autotuneml"
+version = "0.1.0"
+description = "Configuration-driven hyperparameter search with resource-aware pruning and a strict train/test separation protocol."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "AutoTuneML contributors" }]
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scikit-learn>=1.3",
+    "optuna>=3.5",
+    "joblib>=1.3",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+boost = ["xgboost>=2.0", "lightgbm>=4.0"]
+report = ["matplotlib>=3.5"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+autotuneml = "autotuneml.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

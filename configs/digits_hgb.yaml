@@ -1,0 +1,46 @@
+# Postal digit reader: handwritten digit classification for a sorting prototype.
+#
+# Goal: the highest validation accuracy that still fits the edge device
+# (model under 5 MB) and trains in under 30 seconds per configuration on the
+# shared workstation. See examples/digits_postal/README.md for the full story
+# and the numbers from a real run.
+name: digits_postal
+seed: 21
+task: classification
+metric: accuracy
+
+data:
+  source: sklearn:digits
+  test_size: 0.2
+  impute: median
+  scale: true
+
+model:
+  name: hist_gradient_boosting
+  device: auto
+
+search:
+  n_trials: 30
+  timeout_seconds: 900
+  trial_time_budget: 60
+  cv_folds: 5
+  objectives: [val_score, train_time, model_size]
+  sampler: auto
+  early_stopping: true
+  params:
+    max_iter: [50, 400]
+    learning_rate: [0.02, 0.3]
+    max_leaf_nodes: [15, 127]
+    min_samples_leaf: [3, 60]
+    l2_regularization: [0.0, 1.0]
+
+constraints:
+  train_time: { max: 30.0 }
+  model_size: { max: 5000000 }
+
+selection:
+  weights:
+    val_score: 1.0
+    train_time: 0.3
+    model_size: 0.2
+  require_constraints: true
